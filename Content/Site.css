@@ -1,0 +1,88 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 300px;
+}
+
+.col1Width {
+   width: 150px;
+}
+
+.col2Width {
+    width: 300px;
+}
+
+.webgrid-table {
+    font-family: sans-serif;
+    font-size: 1.2em;
+    width: 100%;
+    display: table;
+    border-collapse: separate;
+    border: solid 1px #B3B3B3;
+    background-color: white;
+}
+
+    .webgrid-table td, th {
+        border: 1px solid #B3B3B3;
+        padding: 3px 7px 2px;
+    }
+
+.webgrid-header {
+    background-color: #808080;
+    color: #FFFFFF;
+    padding-bottom: 4px;
+    padding-top: 5px;
+    text-align: left;
+}
+
+.webgrid-footer {
+}
+
+.webgrid-row-style {
+    padding: 3px 7px 2px;
+}
+
+.webgrid-alternating-row {
+    background-color: #E6E6E6;
+    padding: 3px 7px 2px;
+}
+
+.webgrid-selected-row {
+    background-color: #80CCFF;
+    padding: 3px 7px 2px;
+}
+
+#searchinput {
+    width: 200px;
+}
+
+#searchclear {
+    position: absolute;
+    right: 5px;
+    top: 0;
+    bottom: 0;
+    height: 14px;
+    margin: auto;
+    font-size: 14px;
+    cursor: pointer;
+    color: #ccc;
+}
