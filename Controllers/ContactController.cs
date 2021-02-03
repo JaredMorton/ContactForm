@@ -44,44 +44,37 @@ namespace ContactForm.Controllers
 
         public void SeedContacts()
         {
-            using (var context = new ContactContext())
+            IList<Contact> defaultContacts = new List<Contact>
             {
-                if (context.Database.Exists())
-                    return;
-
-                context.Database.CreateIfNotExists();
-
-                IList<Contact> defaultContacts = new List<Contact>
+                new Contact()
                 {
-                    new Contact()
+                    FirstName = "Jared",
+                    LastName = "Morton",
+                    Address = new Address
                     {
-                        FirstName = "Jared",
-                        LastName = "Morton",
-                        Address = new Address
-                        {
-                            Street = "15624 Dasher",
-                            City = "Allen Park",
-                            State = "MI",
-                            Zip = "48101"
-                        }
-                    },
-
-                    new Contact()
-                    {
-                        FirstName = "John",
-                        LastName = "Doe",
-                        Address = new Address
-                        {
-                            Street = "98 Forest Green",
-                            City = "Somewhere",
-                            State = "MI",
-                            Zip = "48182"
-                        }
+                        Street = "15624 Dasher",
+                        City = "Allen Park",
+                        State = "MI",
+                        Zip = "48101"
                     }
-                };
+                },
 
-                context.Contacts.AddRange(defaultContacts);
-            }
+                new Contact()
+                {
+                    FirstName = "John",
+                    LastName = "Doe",
+                    Address = new Address
+                    {
+                        Street = "98 Forest Green",
+                        City = "Somewhere",
+                        State = "MI",
+                        Zip = "48182"
+                    }
+                }
+            };
+
+            foreach (Contact contact in defaultContacts)
+                InsertOrUpdate(contact);
         }
 
         public ActionResult SaveContact(Contact c)
@@ -109,6 +102,8 @@ namespace ContactForm.Controllers
         {
             using (var context = new ContactContext())
             {
+                context.Database.CreateIfNotExists();
+
                 context.Entry(contact).State = contact.ContactID == 0 ?
                                            EntityState.Added :
                                            EntityState.Modified;

@@ -157,13 +157,10 @@
         $(function () {
             $('#contacts').find('tr').on('click', function (data) {
 
-                if (data.target.type !== "submit")
-                    return;
+                if (data.target.type !== "button") 
+                    return;                
 
-                var contactID =
-                {
-                    "contactID": $(this).find("#lblContactID")[0].value,
-                };
+                var contactID = { "contactID": $(this).find("#lblContactID")[0].value };
 
                 $.ajax({
                     url: '/Contact/DeleteContact/',

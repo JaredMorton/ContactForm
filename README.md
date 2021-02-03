@@ -1,4 +1,4 @@
-﻿# Project Title
+﻿# Contact Form
 
 This was a project to test my skills using Entity Framework and JavaScript
 
