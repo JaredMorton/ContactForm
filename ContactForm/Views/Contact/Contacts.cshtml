@@ -1,0 +1,199 @@
+﻿@using HtmlHelpers.BeginCollectionItem
+@model IEnumerable<ContactForm.Data.Models.Contact>
+<div>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a href="#" class="navbar-brand">Search</a>
+            </div>
+            <div class="collapse navbar-collapse">
+                @using (Html.BeginForm("Contacts", "Contact", FormMethod.Get, new { @class = "navbar-form navbar-left" }))
+                {
+                    <div class="btn-group">
+                        <input id="searchinput" name="search" type="search" value="@ViewBag.search" class="form-control">
+                        <span id="searchclear" class="glyphicon glyphicon-remove-circle"></span>
+                    </div>
+                    <button id="btnSearch" type="submit" value="Search" class="btn btn-primary">Search</button>
+                }
+            </div>
+        </div>
+    </nav>
+</div>
+@using (Html.BeginForm())
+{
+    <div id="contacts">
+        <table>
+            <tr>
+                <th style="display:none;">ID</th>
+                <th class="webgrid-header">First Name</th>
+                <th class="webgrid-header">Last Name</th>
+                <th class="webgrid-header">Street</th>
+                <th class="webgrid-header">City</th>
+                <th class="webgrid-header">State</th>
+                <th class="webgrid-header">Postal Code</th>
+            </tr>
+            @foreach (var contact in Model)
+            {
+                <tr>
+                    @Html.Partial("_Contact", contact)
+                </tr>
+            }
+        </table>
+    </div>
+    <br />
+    <button id="newContact" type="button" class="btn btn-primary">New Contact</button>
+}
+
+<div class="modal fade" tabindex="-1" id="contactModal"
+     data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    ×
+                </button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <form id="contactform"  action="/Contact/SaveContact/" method="post">
+                    <table>
+                        <tr style="display:none">
+                            <td>ID</td>
+                            <td><input id="txtID" name="ContactID" type="text" /></td>
+                        </tr>
+                        <tr>
+                            <td>First Name</td>
+                            <td>
+                                <input id="txtFirstName" name="FirstName" type="text" data-val-required="First Name is required." data-val="true" required/>
+                                <span data-valmsg-for="FirstName" data-valmsg-replace="true" style="color: red;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Last Name</td>
+                            <td>
+                                <input id="txtLastName" name="LastName" type="text" data-val-required="Last Name is required." data-val="true" required />
+                                <span data-valmsg-for="LastName" data-valmsg-replace="true" style="color: red;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Street</td>
+                            <td><input id="txtStreet" name="Address.Street" type="text" /></td>
+                        </tr>
+                        <tr>
+                            <td>City</td>
+                            <td><input id="txtCity" name="Address.City" type="text" /></td>
+                        </tr>
+                        <tr>
+                            <td>State</td>
+                            <td><input id="txtState" name="Address.State" type="text" /></td>
+                        </tr>
+                        <tr>
+                            <td>Zip</td>
+                            <td><input id="txtZip" name="Address.Zip" type="text" /></td>
+                        </tr>
+                        <tr>
+                            <td><button type="submit" id="btnSave" class="btn btn-primary button button4">Submit</button></td>
+                            <td><button type="reset" id="btnHideModal" class="btn btn-primary button button4">Cancel</button></td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnShowModal").click(function () {
+            $("#contactModal").modal('show');
+        });
+
+        $("#btnHideModal").click(function () {
+            $("#contactModal").modal('hide');
+        });
+
+        $('#btnSave').submit(function () {
+            var contact = {
+                "ContactID": contactform.txtID.value,
+                "FirstName": contactform.txtFirstName.value,
+                "LastName": contactform.txtLastName.value,
+                "Address": {
+                    "Street": contactform.txtStreet.value,
+                    "City": contactform.txtCity.value,
+                    "State": contactform.txtState.value,
+                    "Zip": contactform.txtZip.value
+                }
+            };
+
+            $.ajax({
+                url: '/Contact/SaveContact/',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                datatype: 'text',
+                data: JSON.stringify(contact),
+                error: function (data) {
+                    alert("Error saving contact.");
+                },
+                complete: function () {
+                    window.location = '/Contact/Contacts/';
+                } 
+            });
+        });
+
+        $(function () {
+            $('#contacts').find('tr').on('dblclick', function () {
+                $("h4").text("Edit Contact");
+                $("#txtID").val($(this).find("#lblContactID")[0].value);
+                $("#txtFirstName").val($(this).find("#lblFirstName")[0].value);
+                $("#txtLastName").val($(this).find("#lblLastName")[0].value);
+                $("#txtStreet").val($(this).find("#lblStreet")[0].value);
+                $("#txtCity").val($(this).find("#lblCity")[0].value);
+                $("#txtState").val($(this).find("#lblState")[0].value);
+                $("#txtZip").val($(this).find("#lblZip")[0].value);
+
+                $("#contactModal").modal('show');
+            });
+        });
+
+        $(function () {
+            $('#contacts').find('tr').on('click', function (data) {
+
+                if (data.target.type !== "button") 
+                    return;                
+
+                var contactID = { "contactID": $(this).find("#lblContactID")[0].value };
+
+                $.ajax({
+                    url: '/Contact/DeleteContact/',
+                    data: JSON.stringify(contactID),
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    error: function (data) {
+                        alert("Error deleting contact.");
+                    },
+                    complete: function () {
+                        window.location = '/Contact/Contacts/';
+                    }
+                });
+            });
+        });
+
+        $(function () {
+            $('#newContact').on('click', function () {
+                $("h4").text("New Contact")
+                $("#txtID").val("");
+                $("#txtFirstName").val("");
+                $("#txtLastName").val("");
+                $("#txtStreet").val("");
+                $("#txtCity").val("");
+                $("#txtState").val("");
+                $("#txtZip").val("");
+
+                $("#contactModal").modal('show');
+            });
+        });
+
+        $("#searchclear").click(function () {
+            window.location = '/Contact/Contacts/';
+        });
+    });
+</script>
